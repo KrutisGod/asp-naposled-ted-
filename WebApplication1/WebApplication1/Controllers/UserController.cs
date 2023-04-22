@@ -1,12 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MaturitaPvaCviceniASP.Models;
-using BCrypt;
+using WebApplication1.Models;
+using WebApplication1.Data;
+using bcrypt=BCrypt.Net.BCrypt;
 using System;
 
-namespace MaturitaPvaCviceniASP.Controllers
+namespace WebApplication1.Controllers
 {
     public class UserController : Controller
     {
+        private readonly ProjectContext _context;
+
+        public UserController(ProjectContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -14,8 +22,16 @@ namespace MaturitaPvaCviceniASP.Controllers
         }
 
         [HttpPost]
-        public IActionResult LoginPost()
+        public IActionResult LoginPost(string username, string password)
         {
+            if (username == "" || password == "")
+            {
+                return RedirectToAction("Login");
+            }
+
+
+
+
             return Redirect("/");
         }
 
@@ -26,16 +42,19 @@ namespace MaturitaPvaCviceniASP.Controllers
         }
 
         [HttpPost]
-        public IActionResult RegisterPost(string username, string password, string passwordCheck)
+        public IActionResult RegisterPost(string email, string username, string password, string passwordCheck)
         {
-            if (username.Trim() == "" || password == "" || passwordCheck == "" || password != passwordCheck)
+            if (email.Trim() == "" || username.Trim() == "" || password == "" || passwordCheck == "" || password != passwordCheck)
             {
                 return RedirectToAction("register");
             }
 
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            string hashedPassword = bcrypt.HashPassword(password);
 
-            User newUser = new User { Username = username, Password = hashedPassword };
+            User newUser = new User { Email = email, Username = username, Password = hashedPassword };
+
+            _context.User.Add(newUser);
+            _context.SaveChanges();
 
             return Redirect("/");
         }

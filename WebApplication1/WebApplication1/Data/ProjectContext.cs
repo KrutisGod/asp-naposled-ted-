@@ -1,20 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MaturitaPvaCviceniASP.Models;
+using WebApplication1.Models;
 
-namespace MaturitaPvaCviceniASP.Data
+namespace WebApplication1.Data
 {
-    public class MaturitaTryContext : DbContext
+    public class ProjectContext : DbContext
     {
-        public MaturitaTryContext(DbContextOptions<MaturitaTryContext> options) : base(options) { }
+        public ProjectContext(DbContextOptions<ProjectContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Note> Notes { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            builder.Entity<Note>()
-                .HasOne(c => c.Username)
-                .WithMany(a => a.Notes);
-        }
+        public DbSet<User> User { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MaturitaPvaCviceniASP.Models
+namespace WebApplication1.Models
 {
     public class Note
     {
