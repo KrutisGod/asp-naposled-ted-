@@ -24,3 +24,6 @@ body {
     border-bottom: solid black 1px;
     margin-bottom: 2em;
 }
+starred {
+    background-color: yellow;
+}

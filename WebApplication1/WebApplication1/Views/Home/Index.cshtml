@@ -23,15 +23,29 @@
         {
             foreach (WebApplication1.Models.Note notes in Model)
             {
-                <div class="notes">
+                if (notes.Starred)
+                {
+                    <div class="notes starred">
                         <p class="notes-title"><b>@notes.Title</b></p>
                         <p class="notes-description">@notes.Description</p>
+                        <a href="@Url.Action("Highlight", "Home", new {noteId = notes.Id, starred = notes.Starred})">Highlight</a>
                         <p>@notes.Date</p>
                     </div>
+                }
+            }
+
+            foreach (WebApplication1.Models.Note notes in Model)
+            {
+                if (!notes.Starred)
+                {
+                    <div class="notes">
+                        <p class="notes-title"><b>@notes.Title</b></p>
+                        <p class="notes-description">@notes.Description</p>
+                        <a href="@Url.Action("Highlight", "Home", new {noteId = notes.Id, starred = notes.Starred})">Highlight</a>
+                        <p>@notes.Date</p>
+                    </div>
+                }
             }
         }
     }
-
-
-
 </div>

@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Drawing;
 using Microsoft.AspNetCore.Http;
-using WebApplication1.Models;
+
+using WebApplication1.Migrations;
 
 namespace WebApplication1.Controllers
 {
@@ -52,6 +53,19 @@ namespace WebApplication1.Controllers
             Note note = new() { Username = currentUser, Title = title, Description = description, Date = date, Starred = false };
 
             _context.Notes.Add(note);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public IActionResult Highlight(int noteId, bool starred)
+        {
+            if (HttpContext.Session.GetString("User") == null)
+                return RedirectToAction("Index");
+
+            Note thisNote = _context.Notes.FirstOrDefault(u => u.Id == noteId);
+
+            thisNote.Starred = !starred;
             _context.SaveChanges();
 
             return RedirectToAction("Index");
