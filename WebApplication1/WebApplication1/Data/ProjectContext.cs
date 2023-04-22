@@ -1,32 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using WebApplication1.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MaturitaPvaCviceniASP.Models;
 
-namespace WebApplication1.Controllers
+namespace MaturitaPvaCviceniASP.Data
 {
-    public class HomeController : Controller
+    public class MaturitaTryContext : DbContext
     {
-        private readonly ILogger<HomeController> _logger;
+        public MaturitaTryContext(DbContextOptions<MaturitaTryContext> options) : base(options) { }
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Note> Notes { get; set; }
 
-        public IActionResult Index()
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            builder.Entity<Note>()
+                .HasOne(c => c.Username)
+                .WithMany(a => a.Notes);
         }
     }
 }
