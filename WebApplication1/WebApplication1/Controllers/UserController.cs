@@ -5,6 +5,7 @@ using System.Linq;
 using Bcrypt = BCrypt.Net.BCrypt;
 using System;
 using WebApplication1.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApplication1.Controllers
 {
@@ -38,6 +39,8 @@ namespace WebApplication1.Controllers
 
             if (!Bcrypt.Verify(password, user.Password))
                 return RedirectToAction("Login");
+            
+            HttpContext.Session.SetString("User", user.Username);
 
             return Redirect("/");
         }
