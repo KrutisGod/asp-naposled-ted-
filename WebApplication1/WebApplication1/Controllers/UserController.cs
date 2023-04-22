@@ -21,6 +21,10 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (HttpContext.Session.GetString("User") == null)
+                return RedirectToAction("/");
+
+           
             return View();
         }
 
