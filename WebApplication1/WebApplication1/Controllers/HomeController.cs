@@ -1,28 +1,60 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using WebApplication1.Data;
+using WebApplication1.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Drawing;
+using Microsoft.AspNetCore.Http;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ProjectContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ProjectContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("User") != null)
+            {
+                Console.WriteLine("INDEXXXXXX");
+                User currentUser = _context.Users.Where(u => u.Username == HttpContext.Session.GetString("User")).First();
+
+                List<Note> notes = currentUser.Notes;
+                Console.WriteLine("IM AT THE NOTES");
+                return View(notes);
+            }
+
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult CreateNote(string title, string description)
         {
-            return View();
-        }
+            if (HttpContext.Session.GetString("User") == null)
+                return RedirectToAction("Index");
 
-        
+            if (title == null || title.Trim().Length == 0 || description == null || description.Trim().Length == 0)
+                return RedirectToAction("Index");
+
+            User currentUser = _context.Users.Where(u => u.Username == HttpContext.Session.GetString("User")).First();
+
+            DateTime today = DateTime.Today;
+            string date = today.ToString("dd/MM/yyyy");
+
+            Console.WriteLine(today);
+
+            Note note = new() { Username = currentUser, Title = title, Description = description, Date = date, Starred = false };
+
+            _context.Notes.Add(note);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
     }
 }

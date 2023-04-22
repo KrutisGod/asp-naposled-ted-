@@ -4,10 +4,10 @@
 
 namespace WebApplication1.Migrations
 {
-    /// <inheritdoc />
+    /// <inheritdoc /> 
     public partial class poprve : Migration
     {
-        /// <inheritdoc />
+        /// <inheritdoc /> 
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -26,7 +26,7 @@ namespace WebApplication1.Migrations
                 });
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc /> 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

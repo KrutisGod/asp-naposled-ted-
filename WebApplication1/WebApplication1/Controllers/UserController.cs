@@ -21,7 +21,7 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            if (HttpContext.Session.GetString("User") == null)
+            if (HttpContext.Session.GetString("User") != null)
                 return RedirectToAction("/");
 
             return View();
@@ -33,9 +33,12 @@ namespace WebApplication1.Controllers
             if (username == null || password == null)
                 return RedirectToAction("Login");
 
-            User user = _context.User
+
+            User user = _context.Users
                 .Where(u => u.Username == username)
                 .FirstOrDefault();
+
+            Console.WriteLine(user);
 
             if (user == null)
                 return RedirectToAction("Login");
@@ -51,7 +54,7 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            if (HttpContext.Session.GetString("User") == null)
+            if (HttpContext.Session.GetString("User") != null)
                 return RedirectToAction("/");
 
             return View();
@@ -64,11 +67,11 @@ namespace WebApplication1.Controllers
             if (email == null || email.Trim().Length == 0 || username == null || username.Trim().Length == 0 || password == null || password != passwordCheck)
                 return RedirectToAction("Register");
 
-            User sameUser = _context.User
+            User sameUser = _context.Users
                 .Where(u => u.Username == username)
                 .FirstOrDefault();
 
-            User sameEmail = _context.User
+            User sameEmail = _context.Users
                 .Where(u => u.Email == email)
                 .FirstOrDefault();
 
@@ -79,16 +82,18 @@ namespace WebApplication1.Controllers
 
             User newUser = new() { Email = email, Username = username, Password = hashedPassword };
 
-            _context.User.Add(newUser);
+            _context.Users.Add(newUser);
             _context.SaveChanges();
 
             return Redirect("/");
         }
 
+        [HttpPost]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("/");
+            return RedirectToAction("Index", "Home");
         }
+
     }
 }

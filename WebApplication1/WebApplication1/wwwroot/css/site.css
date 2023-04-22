@@ -16,3 +16,11 @@ html {
 body {
   margin-bottom: 60px;
 }
+.notes-description {
+    display: none;
+}
+
+.notes {
+    border-bottom: solid black 1px;
+    margin-bottom: 2em;
+}

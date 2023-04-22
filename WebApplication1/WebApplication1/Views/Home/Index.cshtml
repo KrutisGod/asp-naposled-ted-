@@ -1,18 +1,37 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http;
+@model List<WebApplication1.Models.Note>;
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Nazdárek kašpárek</h1>
+    <h1 class="display-4">Welcome</h1>
 
-    <form action="CreateNote" method="post">
+    @if (Context.Session.GetString("User") != null)
+    {
+        <form action="/Home/CreateNote" method="post">
 
-        <label for="title">Title: </label>
-        <input type="text" name="title"/>
-        <label for="description">Description: </label>
-        <input type="text" name="description"/>
-        <input type="submit" value="ADD"/>
+            <label for="title">Title: </label>
+            <input type="text" name="title" />
+            <label for="description">Description: </label>
+            <textarea type="text" name="description"></textarea>
+            <input type="submit" value="ADD" />
 
-    </form>
+        </form>
+
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (WebApplication1.Models.Note notes in Model)
+            {
+                <div class="notes">
+                        <p class="notes-title"><b>@notes.Title</b></p>
+                        <p class="notes-description">@notes.Description</p>
+                        <p>@notes.Date</p>
+                    </div>
+            }
+        }
+    }
+
+
 
 </div>
