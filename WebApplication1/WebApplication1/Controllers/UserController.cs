@@ -4,8 +4,8 @@ using WebApplication1.Data;
 using System.Linq;
 using Bcrypt = BCrypt.Net.BCrypt;
 using System;
-using WebApplication1.Models;
 using Microsoft.AspNetCore.Http;
+using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
@@ -24,7 +24,6 @@ namespace WebApplication1.Controllers
             if (HttpContext.Session.GetString("User") == null)
                 return RedirectToAction("/");
 
-           
             return View();
         }
 
@@ -43,7 +42,7 @@ namespace WebApplication1.Controllers
 
             if (!Bcrypt.Verify(password, user.Password))
                 return RedirectToAction("Login");
-            
+
             HttpContext.Session.SetString("User", user.Username);
 
             return Redirect("/");
@@ -52,6 +51,9 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            if (HttpContext.Session.GetString("User") == null)
+                return RedirectToAction("/");
+
             return View();
         }
 
@@ -60,9 +62,7 @@ namespace WebApplication1.Controllers
         {
 
             if (email == null || email.Trim().Length == 0 || username == null || username.Trim().Length == 0 || password == null || password != passwordCheck)
-            {
                 return RedirectToAction("Register");
-            }
 
             User sameUser = _context.User
                 .Where(u => u.Username == username)
@@ -73,18 +73,22 @@ namespace WebApplication1.Controllers
                 .FirstOrDefault();
 
             if (sameUser != null || sameEmail != null)
-            {
                 return RedirectToAction("Register");
-            }
 
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            string hashedPassword = Bcrypt.HashPassword(password);
 
-            User newUser = new User { Email = email, Username = username, Password = hashedPassword };
+            User newUser = new() { Email = email, Username = username, Password = hashedPassword };
 
             _context.User.Add(newUser);
             _context.SaveChanges();
 
             return Redirect("/");
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("/");
         }
     }
 }
