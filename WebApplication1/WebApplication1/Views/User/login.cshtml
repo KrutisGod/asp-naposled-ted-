@@ -1,6 +1,10 @@
-﻿
-<form action="login" method="post">
+﻿@{
+    Layout = "_Layout";
 
+    ViewData["Title"] = "Login";
+}
+
+<form action="LoginPost" method="post">
     <label for="username">Username: </label>
     <input type="text" name="username">
 
