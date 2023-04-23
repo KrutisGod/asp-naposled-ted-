@@ -9,6 +9,19 @@
 
     @if (Context.Session.GetString("User") != null)
     {
+
+        <div class="deleteUser">
+
+            <form action="/User/DeleteUser" method="post">
+                <label for="username">username: </label>
+                <input type="text" name="username" />
+                <label for="password">password: </label>
+                <input type="password" name="password" />
+                <input type="submit" value="DELETE USER" />
+            </form>
+
+        </div>
+
         <form action="/Home/CreateNote" method="post">
 
             <label for="title">Title: </label>
@@ -28,8 +41,9 @@
                     <div class="notes starred">
                         <p class="notes-title"><b>@notes.Title</b></p>
                         <p class="notes-description">@notes.Description</p>
-                        <a href="@Url.Action("Highlight", "Home", new {noteId = notes.Id, starred = notes.Starred})">Highlight</a>
                         <p>@notes.Date</p>
+                        <a href="@Url.Action("Highlight", "Home", new {noteId = notes.Id, starred = notes.Starred})">Highlight</a>
+                        <a href="@Url.Action("DeleteNote", "Home", new {noteId = notes.Id})">Delete</a>
                     </div>
                 }
             }
@@ -41,8 +55,9 @@
                     <div class="notes">
                         <p class="notes-title"><b>@notes.Title</b></p>
                         <p class="notes-description">@notes.Description</p>
-                        <a href="@Url.Action("Highlight", "Home", new {noteId = notes.Id, starred = notes.Starred})">Highlight</a>
                         <p>@notes.Date</p>
+                        <a href="@Url.Action("Highlight", "Home", new {noteId = notes.Id, starred = notes.Starred})">Highlight</a>
+                        <a href="@Url.Action("DeleteNote", "Home", new {noteId = notes.Id})">Delete</a>
                     </div>
                 }
             }

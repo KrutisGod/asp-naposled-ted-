@@ -5,7 +5,7 @@ using System.Linq;
 using Bcrypt = BCrypt.Net.BCrypt;
 using System;
 using Microsoft.AspNetCore.Http;
-using WebApplication1.Models;
+
 
 namespace WebApplication1.Controllers
 {
@@ -22,7 +22,7 @@ namespace WebApplication1.Controllers
         public IActionResult Login()
         {
             if (HttpContext.Session.GetString("User") != null)
-                return RedirectToAction("/");
+                return Redirect("/");
 
             return View();
         }
@@ -33,12 +33,8 @@ namespace WebApplication1.Controllers
             if (username == null || password == null)
                 return RedirectToAction("Login");
 
-
             User user = _context.Users
-                .Where(u => u.Username == username)
-                .FirstOrDefault();
-
-            Console.WriteLine(user);
+                .FirstOrDefault(u => u.Username == username);
 
             if (user == null)
                 return RedirectToAction("Login");
@@ -55,7 +51,7 @@ namespace WebApplication1.Controllers
         public IActionResult Register()
         {
             if (HttpContext.Session.GetString("User") != null)
-                return RedirectToAction("/");
+                return Redirect("/");
 
             return View();
         }
@@ -68,12 +64,10 @@ namespace WebApplication1.Controllers
                 return RedirectToAction("Register");
 
             User sameUser = _context.Users
-                .Where(u => u.Username == username)
-                .FirstOrDefault();
+                .FirstOrDefault(u => u.Username == username);
 
             User sameEmail = _context.Users
-                .Where(u => u.Email == email)
-                .FirstOrDefault();
+                .FirstOrDefault(e => e.Email == email);
 
             if (sameUser != null || sameEmail != null)
                 return RedirectToAction("Register");
@@ -92,8 +86,38 @@ namespace WebApplication1.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Index", "Home");
+            return Redirect("/");
         }
 
+        [HttpPost]
+        public IActionResult DeleteUser(string username, string password)
+        {
+            if (username == null || username.Trim().Length == 0 || password == null)
+                return Redirect("/");
+
+            User user = _context.Users
+                .FirstOrDefault(u => u.Username == username);
+
+            if (user == null)
+                return Redirect("/");
+
+            if (!Bcrypt.Verify(password, user.Password))
+                return Redirect("/");
+
+            foreach (Note note in _context.Notes)
+            {
+                if (note.Username.Equals(username))
+                {
+                    _context.Notes.Remove(note);
+                    _context.SaveChanges();
+                }
+            }
+
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+
+            HttpContext.Session.Clear();
+            return Redirect("/");
+        }
     }
 }
